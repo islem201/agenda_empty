@@ -1,63 +1,24 @@
-﻿```plaintext
-Comparaison des deux modèles UML (Figure 2 vs Figure 3)
+﻿Comparaison des deux modèles en Detail
 
-  - Figure 2 (modèle fourni) sépare clairement `Event`, `Repetition` et `Termination` : la répétition et ses exceptions/terminaison sont encapsulées dans `Repetition` et `Termination`.
+- Modularité et séparation des responsabilités :
+  - Figure 2 sépare clairement `Event`, `Repetition` et `Termination` : la répétition et ses exceptions/terminaison sont encapsulées dans `Repetition` et `Termination`.
   - Avantage : meilleure séparation des responsabilités, plus facile d'ajouter des comportements liés à la répétition (exceptions, différentes fréquences, terminaison) sans alourdir `Event`.
   - Inconvénient : légère complexité additionnelle (plus de classes, plus d'indirections).
 
-  - Figure 3 (autre modèle) tend à simplifier la structure (par ex. en intégrant la terminaison directement dans `Event` ou en réduisant les classes auxiliaires).
-  - Avantage : moins de classes et donc conception plus simple à comprendre pour des cas d'usage basiques.
-  - Inconvénient : moins flexible pour étendre le comportement des répétitions (ajout d'exceptions, d'autres règles de terminaison, réutilisation de la logique de répétition).
-
-  - Le modèle de la Figure 2 facilite l'ajout futur de nouveaux types de terminaison ou de politiques d'exception (par exemple règles complexes de saut de dates) en créant/sous-classant `Termination` ou en enrichissant `Repetition`.
-  - Le modèle simplifié (Figure 3) nécessite souvent de modifier `Event` lui-même pour ajouter ces comportements, violant l'ouverture/fermeture.
-
-  - Les deux modèles peuvent être implémentés efficacement. La Figure 2 peut ajouter une indirection (accéder à `Event.getRepetition().getTermination()`), mais cela n'a pas d'impact significatif pour une application d'agenda classique.
-
-  - Pour une application d'agenda où les répétitions, exceptions et différentes politiques de terminaison sont au coeur du domaine, le modèle présenté en Figure 2 est préférable : il est plus expressif et maintenable.
-  - Si l'objectif est une application très légère sans besoins d'extension, le modèle de la Figure 3 est acceptable car plus simple.
-
-
-Comparaison des deux modèles UML (Figure 2 vs Figure 3)
-
-- **Modularité et séparation des responsabilités :**
-  - Figure 2 (modèle fourni) sépare clairement `Event`, `Repetition` et `Termination` : la répétition et ses exceptions/terminaison sont encapsulées dans `Repetition` et `Termination`.
-  - Avantage : meilleure séparation des responsabilités, plus facile d'ajouter des comportements liés à la répétition (exceptions, différentes fréquences, terminaison) sans alourdir `Event`.
-  - Inconvénient : légère complexité additionnelle (plus de classes, plus d'indirections).
-
-- **Simplicité et usage direct :**
-  - Figure 3 (autre modèle) tend à simplifier la structure (par ex. en utilisant l'héritage : `RepetitiveEvent` étend `Event`, `FixedTerminationEvent` étend `RepetitiveEvent`).
+- Simplicité et usage direct :
+  - Figure 3  tend à simplifier la structure (par ex. en utilisant l'héritage : `RepetitiveEvent` étend `Event`, `FixedTerminationEvent` étend `RepetitiveEvent`).
   - Avantage : moins de classes auxiliaires et une lecture directe des cas d'usage (les événements répétitifs sont des sous-types d'`Event`).
   - Inconvénient : moins flexible pour étendre la logique de répétition sans toucher la hiérarchie d'héritage.
 
-- **Extensibilité :**
+- Extensibilité :
   - Le modèle de la Figure 2 facilite l'ajout futur de nouveaux types de terminaison ou de politiques d'exception (par exemple règles complexes de saut de dates) en créant/sous-classant `Termination` ou en enrichissant `Repetition`.
-  - Le modèle par héritage (Figure 3) centralise la logique dans des sous-classes d'`Event` ; cela peut être simple au départ mais devient plus verbeux à maintenir si de nouvelles combinaisons apparaissent.
+  - Le modèle par héritage Figure 3 centralise la logique dans des sous-classes d'`Event` ; cela peut être simple au départ mais devient plus verbeux à maintenir si de nouvelles combinaisons apparaissent.
 
-- **Performance et implémentation :**
+- Performance et implémentation :
   - Les deux modèles peuvent être mis en oeuvre efficacement. La Figure 2 utilise une légère indirection (accès via `Event -> Repetition -> Termination`) mais offre une meilleure composition.
 
-- **Conclusion / recommandation :**
-  - Pour un domaine riche en règles de répétition et d'exceptions, je recommande **Figure 2** (modèle modulaire) : maintenable et extensible.
-  - Pour une solution simple et rapide, **Figure 3** (héritage) est acceptable.
-
-Remarque : le code fourni dans ce dépôt suit l'approche modulaire (séparation `Event` / `Repetition` / `Termination`). Le fichier `agenda_diagram.puml` contient une représentation PlantUML du modèle utilisé (nommé `AgendaModel`).
-
-Notes provenant des images attachées (Figure 3 / diagramme alternatif):
-
-- La Figure 3 montre une hiérarchie : `Event` <- `RepetitiveEvent` <- `FixedTerminationEvent`.
-  - `RepetitiveEvent` contient : `frequency`, `addException(day)` et `getFrequency()`.
-  - `FixedTerminationEvent` expose `getTerminationDate()` et `getNumberOfOccurrences()`.
-
-- Correspondance avec le code actuel (dépôt) :
-  - `Event` (code) ↔ `Event` (les deux modèles).
-  - `RepetitiveEvent` (Figure 3) ↔ combinaison `Repetition` + flags dans `Event` (dans notre code `Event` possède une `Repetition`).
-  - `FixedTerminationEvent` (Figure 3) ↔ `Repetition` + `Termination` (classe séparée) dans notre modèle.
-
-- Emphase visuelle : la Figure 3 place les exceptions connectées à l'agenda (notation orientée) ; dans notre implémentation, les exceptions sont stockées dans `Repetition` et consultées lors du calcul des occurrences.
-
-Fichiers PlantUML fournis dans le dépôt :
-- `doc/agenda_diagram.puml` : représentation modulaire (Figure 2 style)
-- `doc/agenda_diagram_alt.puml` : représentation alternative (Figure 3 / héritage)
+- Conclusion / recommandation :
+  - Pour un domaine riche en règles de répétition et d'exceptions, je recommande Figure 2 (modèle modulaire) : maintenable et extensible.
+  - Pour une solution simple et rapide, Figure 3 (héritage) est acceptable.
 
 
