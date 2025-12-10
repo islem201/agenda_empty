@@ -1,0 +1,40 @@
+@startuml AgendaModel
+package agenda {
+class Agenda {
+	- myEvents: List<Event>
+	+ addEvent(e)
+	+ eventsInDay(day): List<Event)
+	+ findByTitle(title): List<Event)
+	+ isFreeFor(e): boolean
+}
+class Event {
+	- myTitle: String
+	- myStart: LocalDateTime
+	- myDuration: Duration
+	- myRepetition: Repetition
+	+ setRepetition(freq)
+	+ addException(date)
+	+ setTermination(date)
+	+ setTermination(count)
+	+ getNumberOfOccurrences(): int
+	+ getTerminationDate(): LocalDate
+	+ isInDay(aDay): boolean
+}
+class Repetition {
+	- myFrequency: ChronoUnit
+	- myExceptions: List<LocalDate>
+	- myTermination: Termination
+	+ addException(date)
+	+ setTermination(t)
+}
+class Termination {
+	- myTerminationDateInclusive: LocalDate
+	- myNumberOfOccurrences: long
+	+ terminationDateInclusive(): LocalDate
+	+ numberOfOccurrences(): long
+}
+Agenda "1" *-- "*" Event
+Event "1" o-- "0..1" Repetition
+Repetition "0..1" o-- "0..1" Termination
+}
+@enduml

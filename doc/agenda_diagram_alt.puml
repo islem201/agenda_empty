@@ -1,0 +1,26 @@
+@startuml AgendaModelAlt
+package agenda {
+class Event {
+	+ title: String
+	+ start: LocalDateTime
+	+ duration: Duration
+	+ isInDay(day: LocalDate): boolean
+}
+class RepetitiveEvent {
+	+ frequency: ChronoUnit
+	+ addException(day: LocalDate)
+	+ getFrequency(): ChronoUnit
+}
+class FixedTerminationEvent {
+	+ getTerminationDate(): LocalDate
+	+ getNumberOfOccurrences(): long
+}
+Event <|-- RepetitiveEvent
+RepetitiveEvent <|-- FixedTerminationEvent
+class Agenda {
+	+ addEvent(e: Event): void
+	+ eventsInDay(day: LocalDate): Event[*]
+}
+Agenda "1" *-- "*" Event
+}
+@enduml
