@@ -62,6 +62,4 @@ public class Termination {
         this.myNumberOfOccurrences = numberOfOccurrences;
         this.myTerminationDateInclusive = start.plus(numberOfOccurrences - 1, frequency);
     }
-
-
 }
